@@ -49,6 +49,6 @@ test("unexpected errors remain generic 500 responses in production", () => {
   assert.equal(response.statusCode, 500);
   assert.deepEqual(response.payload, {
     success: false,
-    message: "database password leaked",
+    message: "Internal server error",
   });
 });
