@@ -16,7 +16,7 @@ export const errorHandler = (err, _req, res, _next) => {
     err?.name === "MongoNetworkError" ||
     String(err?.message || "").includes("ECONNREFUSED");
 
-  const statusCode = err.statusCode || (isCastError || isValidationError ? 400 : isPayloadTooLarge || isMulterLimit ? 413 : isDbConnectionIssue ? 503 : 500);
+  const statusCode = err.statusCode || err.status || (isCastError || isValidationError ? 400 : isPayloadTooLarge || isMulterLimit ? 413 : isDbConnectionIssue ? 503 : 500);
   const message = isCastError
     ? "Invalid ID"
     : isValidationError
