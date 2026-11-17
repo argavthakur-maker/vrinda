@@ -9,6 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 export const errorHandler = (err, _req, res, _next) => {
   const isCastError = err?.name === "CastError";
   const isValidationError = err?.name === "ValidationError";
+  const isMalformedJson = err?.type === "entity.parse.failed";
   const isPayloadTooLarge = err?.type === "entity.too.large" || err?.status === 413;
   const isMulterLimit = err?.code === "LIMIT_FILE_SIZE";
   const isDbConnectionIssue =
@@ -16,8 +17,10 @@ export const errorHandler = (err, _req, res, _next) => {
     err?.name === "MongoNetworkError" ||
     String(err?.message || "").includes("ECONNREFUSED");
 
-  const statusCode = err.statusCode || err.status || (isCastError || isValidationError ? 400 : isPayloadTooLarge || isMulterLimit ? 413 : isDbConnectionIssue ? 503 : 500);
-  const message = isCastError
+  const statusCode = err.statusCode || (isMalformedJson ? 400 : err.status) || (isCastError || isValidationError ? 400 : isPayloadTooLarge || isMulterLimit ? 413 : isDbConnectionIssue ? 503 : 500);
+  const message = isMalformedJson
+    ? "Invalid JSON payload."
+    : isCastError
     ? "Invalid ID"
     : isValidationError
     ? err.message || "Validation failed"
