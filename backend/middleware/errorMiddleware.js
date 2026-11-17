@@ -30,7 +30,7 @@ export const errorHandler = (err, _req, res, _next) => {
     ? "Uploaded data is too large. Please reduce file size."
     : isDbConnectionIssue
     ? "Database connection unavailable. Please try again in a moment."
-    : err.message || "Internal server error";
+    : (isDevelopment ? err.message : null) || "Internal server error";
 
   if (isDevelopment) {
     // eslint-disable-next-line no-console
